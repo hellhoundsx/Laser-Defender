@@ -73,7 +73,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 5fcc5eaca17583746968f60205eca9eb, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 08c5f4d7ac6075c418d779b70dc8548b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -93,12 +93,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 3641350483792171765}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 53d2437edae6768468301636d07e04bd, type: 3}
+  m_Script: {fileID: 11500000, guid: 038c2294aebb6fd4bb55d75c4bee80c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 10
   padding: 1
   projectileSpeed: 10
-  laserPrefab: {fileID: 7474580278827748828, guid: c7beb709ff62dd5448f7cdb12332cbc4,
+  laserPrefab: {fileID: 7474580278827748828, guid: e4463a9b846e1a347b7fb56d6363fc83,
     type: 3}
   projectileFiringPeriod: 0.1
