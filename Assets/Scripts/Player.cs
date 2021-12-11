@@ -1,68 +1,57 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour {
     [SerializeField] float moveSpeed = 10f;
-    [SerializeField] float padding = 1f;
-    [SerializeField] float projectileSpeed = 10f;
+    [SerializeField] float paddingTop = 1f;
+    [SerializeField] float paddingBottom = 1f;
+    [SerializeField] float paddingLeft = .5f;
+    [SerializeField] float paddingRight = .5f;
     [SerializeField] GameObject laserPrefab;
-    [SerializeField] float projectileFiringPeriod = 0.1f;
 
-    Coroutine firingCoroutine;
+    Vector2 rawInput;
+    Vector2 minBounds;
+    Vector2 maxBounds;
 
-    float xMin;
-    float xMax;
-    float yMin;
-    float yMax;
+    Shooter shooter;
 
-    // Start is called before the first frame update
+    void Awake() {
+        shooter = GetComponent<Shooter>();
+    }
+    
     void Start() {
         SetUpMoveBoundaries();
     }
 
-    // Update is called once per frame
     void Update() {
         Move();
-        Fire();
     }
 
+    void OnMove (InputValue value) {
+        rawInput = value.Get<Vector2>();
+    }
 
+    void OnFire (InputValue value) {
+        if(shooter != null) {
+            shooter.isFiring = value.isPressed;
+        }
+    }
 
     private void SetUpMoveBoundaries() {
         Camera camera = Camera.main;
 
-        xMin = camera.ViewportToWorldPoint(new Vector3(0, 0, 0)).x;
-        xMax = camera.ViewportToWorldPoint(new Vector3(1, 0, 0)).x;
-        yMin = camera.ViewportToWorldPoint(new Vector3(0, 0, 0)).y + padding;
-        yMax = camera.ViewportToWorldPoint(new Vector3(0, 1, 0)).y - padding;
-    }
-    private void Fire() {
-        if (Input.GetButtonDown("Fire1")) {
-            firingCoroutine = StartCoroutine(FireContinuosly());
-        }
-        if (Input.GetButtonUp("Fire1")) {
-            StopCoroutine(firingCoroutine);
-        }
-    }
-
-    IEnumerator FireContinuosly() {
-        while(true) {
-            GameObject laser = Instantiate(laserPrefab, transform.position, Quaternion.identity);
-
-            laser.GetComponent<Rigidbody2D>().velocity = new Vector2(0, projectileSpeed);
-
-            yield return new WaitForSeconds(projectileFiringPeriod);
-        }
+        minBounds = camera.ViewportToWorldPoint(new Vector2(0, 0));
+        maxBounds = camera.ViewportToWorldPoint(new Vector2(1, 1));
     }
 
     private void Move () {
-        var deltaX = Input.GetAxis("Horizontal") * Time.deltaTime * moveSpeed;
-        var deltaY = Input.GetAxis("Vertical") * Time.deltaTime * moveSpeed;
-        var newXPos = Mathf.Clamp(transform.position.x + deltaX, xMin, xMax);
-        var newYPos = Mathf.Clamp(transform.position.y + deltaY, yMin, yMax);
+        Vector3 delta = rawInput * moveSpeed * Time.deltaTime;
 
-        gameObject.transform.position = new Vector2(newXPos, newYPos);
+        var newXPos = Mathf.Clamp(transform.position.x + delta.x, minBounds.x + paddingLeft, maxBounds.x - paddingRight);
+        var newYPos = Mathf.Clamp(transform.position.y + delta.y, minBounds.y + paddingBottom, maxBounds.y - paddingTop);
+
+        transform.position = new Vector2(newXPos, newYPos);
     }
-
 }
