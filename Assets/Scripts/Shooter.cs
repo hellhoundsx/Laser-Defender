@@ -4,20 +4,43 @@ using UnityEngine;
 
 public class Shooter : MonoBehaviour
 {
+    [Header("General")]
     [SerializeField] GameObject projectilePrefab;
     [SerializeField] float projectileSpeed = 10f;
-    [SerializeField] float projectileFiringPeriod = 0.1f;
+    [SerializeField] float baseFiringRate = .2f;
+
+    [Header("AI")]
+    [SerializeField] bool useAI;
+    [SerializeField] float AIFireVariable = .5f;
+    [SerializeField] float minFiringSpeed = .1f;
+
+
+    [HideInInspector]
+    public bool isFiring;
 
     Coroutine firingCoroutine;
 
-    public bool isFiring;
-
     void Start() {
-        
+        if(useAI) {
+            isFiring = true;
+        }
     }
 
     void Update() {
         Fire();
+    }
+
+    private float GetProjectileFiringPeriod () {
+        if(useAI) {
+            float randomTime = Random.Range(
+                baseFiringRate - AIFireVariable,
+                baseFiringRate + AIFireVariable
+            );
+
+            return Mathf.Clamp(randomTime, minFiringSpeed, float.MaxValue);
+        } else {
+            return baseFiringRate;
+        }
     }
 
 
@@ -41,10 +64,10 @@ public class Shooter : MonoBehaviour
             Rigidbody2D rb = laser.GetComponent<Rigidbody2D>();
 
             if (rb != null) {
-                rb.velocity = new Vector2(0, projectileSpeed);
+                rb.velocity = transform.up * projectileSpeed;
             }
 
-            yield return new WaitForSeconds(projectileFiringPeriod);
+            yield return new WaitForSeconds(GetProjectileFiringPeriod());
         }
     }
 }

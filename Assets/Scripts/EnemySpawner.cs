@@ -23,7 +23,7 @@ public class EnemySpawner : MonoBehaviour
                     Instantiate(
                         currentWave.getEnemyPrefab(i),
                         currentWave.getStartingWaypoint().position,
-                        Quaternion.identity,
+                        Quaternion.Euler(0,0,180),
                         transform
                     );
 
